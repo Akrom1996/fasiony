@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { FarfetchModule } from './modules/farfetch/farfetch.module';
 
 @Module({
-  imports: [],
+  imports: [FarfetchModule],
   controllers: [],
   providers: [],
 })
