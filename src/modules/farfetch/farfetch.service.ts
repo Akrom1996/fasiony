@@ -39,10 +39,13 @@ export class FarfetchService {
         page,
         priceSelector + ' > div > p.es58y7t0.ltr-1oyjj5-Footnote.e1ektl920',
       ), // discount percent
-    }
+    };
   }
   async startItemCrawling(url: string): Promise<any> {
     this.log.log(`Starting farfetch with ${url}`);
+    const highlightList = [];
+    const list = [];
+    let price;
     const browser = await puppeteer.launch({
       executablePath: isDocker()
         ? '/usr/bin/chromium-browser'
@@ -58,13 +61,12 @@ export class FarfetchService {
     await page.goto(url);
     await page.waitForSelector(
       '#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1q071fb > div.ltr-ayy0e9 > div > h1 > a',
-    );
+    ); // wait for loading item name
     const itemName = await this.getSelectorText(
       page,
       `#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1q071fb > div.ltr-ayy0e9 > div > h1 > a`,
-    );
+    ); // get item name
     this.log.log(itemName);
-    let price;
     const priceSelector =
       '#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1q071fb > div.ltr-10c5n0l.eev02n90'; // discount or sale
     const saleExists = await this.checkSelectorForExistance(
@@ -77,16 +79,15 @@ export class FarfetchService {
         priceSelector + ' > p.ltr-194u1uv-Heading.e54eo9p0',
       );
     } else {
-      price = await this.priceWithSale(page, priceSelector);
+      price = await this.priceWithSale(page, priceSelector); // get price with sales
     }
     this.log.log(`price ${price}`);
     const sizeSelector =
       '#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1m7d7di > div.ltr-1m7d7di > div';
     const sizeExists = await page
       .$eval(sizeSelector, () => true)
-      .catch(() => false);
+      .catch(() => false); // check for size selector exists
     this.log.log(`other sizes exist: ${sizeExists}`);
-    const list = [];
     if (sizeExists) {
       await (await page.$(sizeSelector)).click();
       await page.waitForTimeout(600);
@@ -100,16 +101,16 @@ export class FarfetchService {
             .then(() => true)
             .catch(() => false)
         ) {
-          if (!(await this.getXPathText(page, `${liSelector}/div`))) {
-            newPriceWithDiscount = price;
-          } else {
-            await this.getXPathText(page, `${liSelector}/div`);
-            newSizeDiscountSelector.push(liSelector);
-            newPriceWithDiscount = await this.getXPathText(
-              page,
-              `${liSelector}/div`,
-            );
-          }
+          // if (!(await this.getXPathText(page, `${liSelector}/div`))) {
+          //   newPriceWithDiscount = price;
+          // } else {
+          //   await this.getXPathText(page, `${liSelector}/div`);
+          //   newSizeDiscountSelector.push(liSelector);
+          //   newPriceWithDiscount = await this.getXPathText(
+          //     page,
+          //     `${liSelector}/div`,
+          //   );
+          // }
           const payload = {
             size: (await this.getXPathText(page, `${liSelector}/p[1]`)).trim(),
             sizePrice:
@@ -155,6 +156,30 @@ export class FarfetchService {
         mainDetailsSelector + ' > div > div.ltr-4y8w0i-Body.e1s5vycj0 > p',
       );
     this.log.log(`details ${details}`);
+    await page
+      .waitForSelector(
+        '#tabpanel-0 > div > div.ltr-182wjbq.exjav153 > div > div.ltr-fzg9du.e1yiqd0',
+      )
+      .catch((err) => console.log(err));
+    if (
+      await this.checkSelectorForExistance(
+        page,
+        '#tabpanel-0 > div > div.ltr-182wjbq.exjav153 > div > div.ltr-fzg9du.e1yiqd0',
+      ) // check highlights
+    ) {
+      let counter = 1;
+      while (counter < 20) {
+        const highlightSelector = `#tabpanel-0 > div > div.ltr-182wjbq.exjav153 > div > div.ltr-fzg9du.e1yiqd0 > ul > li:nth-child(${counter})`;
+        if (await this.checkSelectorForExistance(page, highlightSelector)) {
+          highlightList.push(
+            (await this.getSelectorText(page, highlightSelector)).trim(),
+          );
+        }
+        counter++;
+      }
+    }
+    this.log.log(`highlights of item ${highlightList}`);
+
     await browser.close();
     return Promise.resolve({
       url: url,
@@ -163,6 +188,7 @@ export class FarfetchService {
       sizePrice: list,
       imageUrl: imageSrc[0],
       details: details || 'No details provided',
+      highlights: highlightList,
       dateTime: new Date(),
     });
   }
