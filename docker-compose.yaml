@@ -1,11 +1,5 @@
 version: "3.9"
 services:
-  fasiony:
-    build: ./
-    container_name: fasiony-service
-    ports: 
-      - "8080:3002"
-    restart: unless-stopped
   db:
     image: postgres
     container_name: fasiony-db
@@ -14,14 +8,24 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: admin
+      POSTGRES_DB: fasiony
       POSTGRES_PASSWORD: 1234admin
       PGDATA: "/var/lib/postgresql/data/pgdata"
   pg-admin:
     image: dpage/pgadmin4:latest
     container_name: admin-pg
+    restart: unless-stopped
     ports:
       - "5051:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: akobidov777@gmail.com
       PGADMIN_DEFAULT_PASSWORD: 1234admin
+  fasiony:
+    build: ./
+    container_name: fasiony-service
+    ports: 
+      - "8080:3002"
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234admin@db:5432/fasiony?schema=public
+  

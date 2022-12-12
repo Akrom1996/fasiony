@@ -1,0 +1,54 @@
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model WebsiteUrls {
+  id        Int      @id @default(autoincrement())
+  url       String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model Items {
+  id       Int            @id @default(autoincrement())
+  itemName String         @unique
+  variance ItemVariance[]
+}
+
+model ItemVariance {
+  id           Int                      @id @default(autoincrement())
+  varianceName String                   @unique
+  itemsId      Int
+  item         Items                    @relation(fields: [itemsId], references: [id])
+  websites     ItemVarianceOnWebsites[]
+}
+
+model Websites {
+  id           Int                      @id @default(autoincrement())
+  url          String                   @unique
+  itemVariance ItemVarianceOnWebsites[]
+  details      ItemDetails?
+}
+
+model ItemVarianceOnWebsites {
+  websites       Websites     @relation(fields: [websitesId], references: [id])
+  websitesId     Int // relation scalar field (used in the `@relation` attribute above)
+  itemVariance   ItemVariance @relation(fields: [itemVarianceId], references: [id])
+  itemVarianceId Int // relation scalar field (used in the `@relation` attribute above)
+
+  @@id([websitesId, itemVarianceId])
+}
+
+model ItemDetails {
+  id        Int      @id @default(autoincrement())
+  price     String
+  dateTime  DateTime @default(now())
+  details   String?
+  website   Websites @relation(fields: [websiteId], references: [id])
+  websiteId Int      @unique
+}
