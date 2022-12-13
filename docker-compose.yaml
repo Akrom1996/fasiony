@@ -1,5 +1,18 @@
 version: "3.9"
 services:
+  # fasiony:
+  #   build: ./
+  #   container_name: fasiony-service
+  #   # network_mode: bridge
+  #   ports: 
+  #     - "8085:3002"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     customnetwork:
+  #       ipv4_address: 172.20.0.4
+  
   db:
     image: postgres
     container_name: fasiony-db
@@ -9,23 +22,24 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_DB: fasiony
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234admin
       PGDATA: "/var/lib/postgresql/data/pgdata"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # networks:
+    #   customnetwork:
+    #     ipv4_address: 172.17.0.3
   pg-admin:
     image: dpage/pgadmin4:latest
     container_name: admin-pg
     restart: unless-stopped
+    network_mode: bridge
     ports:
       - "5051:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: akobidov777@gmail.com
       PGADMIN_DEFAULT_PASSWORD: 1234admin
-  fasiony:
-    build: ./
-    container_name: fasiony-service
-    ports: 
-      - "8080:3002"
-    restart: unless-stopped
-    environment:
-      - DATABASE_URL=postgresql://postgres:1234admin@db:5432/fasiony?schema=public
-  

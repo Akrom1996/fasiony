@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { ItemModel } from './dto/farfetch.service.dto';
 import { FarfetchService } from './farfetch.service';
 
 @Controller('/farfetch')
@@ -15,5 +16,9 @@ export class FarfetchController {
   @Get('/crawl-from-db')
   crawlItemsFromDB() {
     return this.farfetchService.getItemsDataFromDB();
+  }
+  @Post('/save-db-demo')
+  storeData(@Body() body: ItemModel[]) {
+    return this.farfetchService.storeItemInfoInDB(body);
   }
 }

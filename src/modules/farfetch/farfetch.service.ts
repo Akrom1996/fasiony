@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { rejects } from 'assert';
 import puppeteer from 'puppeteer-extra';
 import { args, isDocker, userAgent } from 'src/config/service-config';
+import { ItemModel } from './dto/farfetch.service.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pluginStealth = require('puppeteer-extra-plugin-stealth');
 
@@ -29,22 +30,22 @@ export class FarfetchService {
   async checkSelectorForExistance(page, selector) {
     return await page.$eval(selector, () => true).catch(() => false);
   }
-  async priceWithSale(page, priceSelector) {
-    return {
-      originalPrice: await this.getSelectorText(
-        page,
-        priceSelector + '> div > p.ltr-jp8o8r-Footnote.e9urw9y0',
-      ),
-      salePrice: await this.getSelectorText(
-        page,
-        priceSelector + ' > p.ltr-o8ptjq-Heading.ex663c10',
-      ), // sale price
-      discountPercent: await this.getSelectorText(
-        page,
-        priceSelector + ' > div > p.es58y7t0.ltr-1oyjj5-Footnote.e1ektl920',
-      ), // discount percent
-    };
-  }
+  // async priceWithSale(page, priceSelector) {
+  //   return {
+  //     originalPrice: await this.getSelectorText(
+  //       page,
+  //       priceSelector + '> div > p.ltr-jp8o8r-Footnote.e9urw9y0',
+  //     ),
+  //     salePrice: await this.getSelectorText(
+  //       page,
+  //       priceSelector + ' > p.ltr-o8ptjq-Heading.ex663c10',
+  //     ), //sale price
+  //     discountPercent: await this.getSelectorText(
+  //       page,
+  //       priceSelector + ' > div > p.es58y7t0.ltr-1oyjj5-Footnote.e1ektl920',
+  //     ), // discount percent
+  //   };
+  // }
 
   async getItemDataByUrl(url: string) {
     this.log.log(`Starting farfetch with ${url}`);
@@ -66,6 +67,7 @@ export class FarfetchService {
     await browser.close();
     return data;
   }
+
   async startItemCrawling(page, url: string): Promise<any> {
     const highlightList = [];
     const list = [];
@@ -93,7 +95,11 @@ export class FarfetchService {
             priceSelector + ' > p.ltr-194u1uv-Heading.e54eo9p0',
           );
         } else {
-          price = await this.priceWithSale(page, priceSelector); // get price with sales
+          // price = await this.priceWithSale(page, priceSelector); // get price with sales
+          price = await this.getSelectorText(
+            page,
+            priceSelector + ' > p.ltr-o8ptjq-Heading.ex663c10',
+          );
         }
         this.log.log(`price ${price}`);
         const sizeSelector =
@@ -218,9 +224,38 @@ export class FarfetchService {
       results.push(data);
     }
     await browser.close();
+    // TODO: store item info into DB
     return Promise.resolve(results);
   }
-
+  async storeItemInfoInDB(itemBody: ItemModel[]): Promise<any> {
+    for (let i = 0; i < itemBody.length; i++) {
+      const variance = [];
+      itemBody[i].sizePrice.forEach(async (element) => {
+        variance.push({
+          varianceName: element.size,
+          price: element.sizePrice,
+          // websites: await this.client.websiteUrls.create({
+          //   data: {
+          //     url: itemBody[i].url,
+          //   },
+          // }),
+        });
+      });
+      await this.client.items.create({
+        data: {
+          itemName: itemBody[i].item,
+          details: itemBody[i].details,
+          imageUrl: itemBody[i].imageUrl,
+          highlights: itemBody[i].highlights,
+          variance: {
+            create: variance,
+          },
+        },
+      });
+    }
+    // await this.client.items.findMany().then((data) => console.log(data));
+    return 'success';
+  }
   async createWebsiteToCrawl(url: string, name: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.client.websiteUrls
