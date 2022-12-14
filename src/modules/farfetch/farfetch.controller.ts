@@ -21,4 +21,8 @@ export class FarfetchController {
   storeData(@Body() body: ItemModel[]) {
     return this.farfetchService.storeItemInfoInDB(body);
   }
+  @Get('/get-all-items')
+  getStoredData() {
+    return this.farfetchService.getAllItemsFormDB();
+  }
 }

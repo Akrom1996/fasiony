@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Items, PrismaClient } from '@prisma/client';
 import { rejects } from 'assert';
+import { url } from 'inspector';
 import puppeteer from 'puppeteer-extra';
 import { args, isDocker, userAgent } from 'src/config/service-config';
 import { ItemModel } from './dto/farfetch.service.dto';
@@ -65,6 +66,8 @@ export class FarfetchService {
       Promise.reject(err),
     );
     await browser.close();
+    const result = await this.storeItemInfoInDB([data]);
+    console.log(result);
     return data;
   }
 
@@ -227,31 +230,78 @@ export class FarfetchService {
     // TODO: store item info into DB
     return Promise.resolve(results);
   }
+  async getAllItemsFormDB(): Promise<Items[]> {
+    const data = await this.client.items.findMany({
+      include: {
+        variance: {
+          include: {
+            websites: {
+              include: {
+                websites: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return data;
+  }
   async storeItemInfoInDB(itemBody: ItemModel[]): Promise<any> {
     for (let i = 0; i < itemBody.length; i++) {
       const variance = [];
+      let data = await this.client.websites.findUnique({
+        where: {
+          url: itemBody[i].url,
+        },
+        select: {
+          id: true,
+        },
+      });
+      const itemData = await this.client.items.findUnique({
+        where: {
+          itemName: itemBody[i].item,
+        },
+      });
+      if (!data) {
+        data = await this.client.websites.create({
+          data: {
+            url: itemBody[i].url,
+          },
+          select: {
+            id: true,
+          },
+        });
+      }
       itemBody[i].sizePrice.forEach(async (element) => {
         variance.push({
           varianceName: element.size,
           price: element.sizePrice,
-          // websites: await this.client.websiteUrls.create({
-          //   data: {
-          //     url: itemBody[i].url,
-          //   },
-          // }),
-        });
-      });
-      await this.client.items.create({
-        data: {
-          itemName: itemBody[i].item,
-          details: itemBody[i].details,
-          imageUrl: itemBody[i].imageUrl,
-          highlights: itemBody[i].highlights,
-          variance: {
-            create: variance,
+          websites: {
+            create: [
+              {
+                websites: {
+                  connect: {
+                    id: data.id,
+                  },
+                },
+              },
+            ],
           },
-        },
-      });
+        });
+      }); // creating variance with url n:m connection
+      if (!itemData)
+        await this.client.items.create({
+          data: {
+            itemName: itemBody[i].item,
+            details: itemBody[i].details,
+            imageUrl: itemBody[i].imageUrl,
+            highlights: itemBody[i].highlights,
+            variance: {
+              create: variance,
+            },
+          },
+        });
+      else console.log(itemData);
     }
     // await this.client.items.findMany().then((data) => console.log(data));
     return 'success';

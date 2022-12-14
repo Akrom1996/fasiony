@@ -1,0 +1,519 @@
+[
+    {
+        "id": 65,
+        "itemName": "Off-White",
+        "details": "Adorned with unmistakable elements of Off-White’s visual identity, the 3.0 Off Court sneakers are a recognisable staple. Their panelled design is accented with a side Arrow patch and completed with a signature Zip Tie tag.",
+        "imageUrl": "https://cdn-images.farfetch-contents.com/18/53/33/23/18533323_41108855_1000.jpg",
+        "highlights": [
+            "grey/white",
+            "leather",
+            "panelled design",
+            "signature Arrows motif",
+            "signature Zip Tie tag",
+            "round toe",
+            "front lace-up fastening",
+            "flat rubber sole"
+        ],
+        "variance": [
+            {
+                "id": 128,
+                "varianceName": "34 IT",
+                "price": "472 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 36,
+                        "websitesId": 39,
+                        "itemVarianceId": 128,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 129,
+                "varianceName": "35 IT",
+                "price": "472 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 37,
+                        "websitesId": 39,
+                        "itemVarianceId": 129,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 130,
+                "varianceName": "36 IT",
+                "price": "413 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 38,
+                        "websitesId": 39,
+                        "itemVarianceId": 130,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 131,
+                "varianceName": "37 IT",
+                "price": "413 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 39,
+                        "websitesId": 39,
+                        "itemVarianceId": 131,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 132,
+                "varianceName": "38 IT",
+                "price": "413 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 40,
+                        "websitesId": 39,
+                        "itemVarianceId": 132,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 133,
+                "varianceName": "39 IT",
+                "price": "413 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 41,
+                        "websitesId": 39,
+                        "itemVarianceId": 133,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 134,
+                "varianceName": "40 IT",
+                "price": "413 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 42,
+                        "websitesId": 39,
+                        "itemVarianceId": 134,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 135,
+                "varianceName": "41 IT",
+                "price": "472 €",
+                "dateTime": "2022-12-14T10:09:35.969Z",
+                "itemsId": 65,
+                "websites": [
+                    {
+                        "id": 43,
+                        "websitesId": 39,
+                        "itemVarianceId": 135,
+                        "websites": {
+                            "id": 39,
+                            "url": "https://www.farfetch.com/lv/shopping/women/off-white-30-off-court-sneakers-item-18533323.aspx"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 66,
+        "itemName": "Agnelle",
+        "details": "No details provided",
+        "imageUrl": "https://cdn-images.farfetch-contents.com/18/95/35/71/18953571_42527344_1000.jpg",
+        "highlights": [
+            "brown/white",
+            "lambskin/cotton",
+            "full-finger design",
+            "crochet panelling",
+            "perforated detailing",
+            "front press-stud fastening"
+        ],
+        "variance": [
+            {
+                "id": 136,
+                "varianceName": "6 IN",
+                "price": "114 €",
+                "dateTime": "2022-12-14T10:09:36.152Z",
+                "itemsId": 66,
+                "websites": [
+                    {
+                        "id": 44,
+                        "websitesId": 40,
+                        "itemVarianceId": 136,
+                        "websites": {
+                            "id": 40,
+                            "url": "https://www.farfetch.com/lv/shopping/women/agnelle-karine-leather-gloves-item-18953571.aspx?storeid=13537"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 137,
+                "varianceName": "6.5 IN",
+                "price": "114 €",
+                "dateTime": "2022-12-14T10:09:36.152Z",
+                "itemsId": 66,
+                "websites": [
+                    {
+                        "id": 45,
+                        "websitesId": 40,
+                        "itemVarianceId": 137,
+                        "websites": {
+                            "id": 40,
+                            "url": "https://www.farfetch.com/lv/shopping/women/agnelle-karine-leather-gloves-item-18953571.aspx?storeid=13537"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 138,
+                "varianceName": "7 IN",
+                "price": "114 €",
+                "dateTime": "2022-12-14T10:09:36.152Z",
+                "itemsId": 66,
+                "websites": [
+                    {
+                        "id": 46,
+                        "websitesId": 40,
+                        "itemVarianceId": 138,
+                        "websites": {
+                            "id": 40,
+                            "url": "https://www.farfetch.com/lv/shopping/women/agnelle-karine-leather-gloves-item-18953571.aspx?storeid=13537"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 139,
+                "varianceName": "7.5 IN",
+                "price": "114 €",
+                "dateTime": "2022-12-14T10:09:36.152Z",
+                "itemsId": 66,
+                "websites": [
+                    {
+                        "id": 47,
+                        "websitesId": 40,
+                        "itemVarianceId": 139,
+                        "websites": {
+                            "id": 40,
+                            "url": "https://www.farfetch.com/lv/shopping/women/agnelle-karine-leather-gloves-item-18953571.aspx?storeid=13537"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 140,
+                "varianceName": "8 IN",
+                "price": "114 €",
+                "dateTime": "2022-12-14T10:09:36.152Z",
+                "itemsId": 66,
+                "websites": [
+                    {
+                        "id": 48,
+                        "websitesId": 40,
+                        "itemVarianceId": 140,
+                        "websites": {
+                            "id": 40,
+                            "url": "https://www.farfetch.com/lv/shopping/women/agnelle-karine-leather-gloves-item-18953571.aspx?storeid=13537"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 67,
+        "itemName": "Dolce & Gabbana",
+        "details": "No details provided",
+        "imageUrl": "https://cdn-images.farfetch-contents.com/18/66/48/67/18664867_40499248_1000.jpg",
+        "highlights": [],
+        "variance": [
+            {
+                "id": 141,
+                "varianceName": "36 IT - XS",
+                "price": "3,199 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 49,
+                        "websitesId": 41,
+                        "itemVarianceId": 141,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 142,
+                "varianceName": "38 IT - S",
+                "price": "990 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 50,
+                        "websitesId": 41,
+                        "itemVarianceId": 142,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 143,
+                "varianceName": "40 IT - M",
+                "price": "990 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 51,
+                        "websitesId": 41,
+                        "itemVarianceId": 143,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 144,
+                "varianceName": "42 IT - L",
+                "price": "1,155 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 52,
+                        "websitesId": 41,
+                        "itemVarianceId": 144,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 145,
+                "varianceName": "44 IT - XL",
+                "price": "1,073 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 53,
+                        "websitesId": 41,
+                        "itemVarianceId": 145,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 146,
+                "varianceName": "46 IT - XXL",
+                "price": "1,320 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 54,
+                        "websitesId": 41,
+                        "itemVarianceId": 146,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 147,
+                "varianceName": "48 IT - XXXL",
+                "price": "1,320 €",
+                "dateTime": "2022-12-14T11:46:31.971Z",
+                "itemsId": 67,
+                "websites": [
+                    {
+                        "id": 55,
+                        "websitesId": 41,
+                        "itemVarianceId": 147,
+                        "websites": {
+                            "id": 41,
+                            "url": "https://www.farfetch.com/lv/shopping/women/dolce-gabbana-floral-print-dress-item-18664867.aspx?storeid=13098"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 68,
+        "itemName": "Burberry",
+        "details": "The Vintage Check pattern is a Burberry house classic, found throughout each collection of ready-to-wear and accessories. This design formed part of the latest lineup and welcomes the pattern onto a soft scarf made from a knit of cashmere, alpaca wool and silk.",
+        "imageUrl": "https://cdn-images.farfetch-contents.com/19/22/33/21/19223321_42292766_1000.jpg",
+        "highlights": [
+            "natural white",
+            "wool-cashmere-silk blend",
+            "knitted construction",
+            "Vintage Check pattern",
+            "finished edge",
+            "long length"
+        ],
+        "variance": []
+    },
+    {
+        "id": 69,
+        "itemName": "Canada Goose",
+        "details": "No details provided",
+        "imageUrl": "https://cdn-images.farfetch-contents.com/15/50/68/65/15506865_31477931_1000.jpg",
+        "highlights": [],
+        "variance": [
+            {
+                "id": 148,
+                "varianceName": "S",
+                "price": "746 €",
+                "dateTime": "2022-12-14T11:49:20.987Z",
+                "itemsId": 69,
+                "websites": [
+                    {
+                        "id": 56,
+                        "websitesId": 43,
+                        "itemVarianceId": 148,
+                        "websites": {
+                            "id": 43,
+                            "url": "https://www.farfetch.com/lv/shopping/men/canada-goose-blue-hybridge-lite-padded-jacket-item-15506865.aspx?storeid=9959"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 149,
+                "varianceName": "M",
+                "price": "746 €",
+                "dateTime": "2022-12-14T11:49:20.987Z",
+                "itemsId": 69,
+                "websites": [
+                    {
+                        "id": 57,
+                        "websitesId": 43,
+                        "itemVarianceId": 149,
+                        "websites": {
+                            "id": 43,
+                            "url": "https://www.farfetch.com/lv/shopping/men/canada-goose-blue-hybridge-lite-padded-jacket-item-15506865.aspx?storeid=9959"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 150,
+                "varianceName": "L",
+                "price": "1,065 €",
+                "dateTime": "2022-12-14T11:49:20.987Z",
+                "itemsId": 69,
+                "websites": [
+                    {
+                        "id": 58,
+                        "websitesId": 43,
+                        "itemVarianceId": 150,
+                        "websites": {
+                            "id": 43,
+                            "url": "https://www.farfetch.com/lv/shopping/men/canada-goose-blue-hybridge-lite-padded-jacket-item-15506865.aspx?storeid=9959"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 151,
+                "varianceName": "XL",
+                "price": "1,065 €",
+                "dateTime": "2022-12-14T11:49:20.987Z",
+                "itemsId": 69,
+                "websites": [
+                    {
+                        "id": 59,
+                        "websitesId": 43,
+                        "itemVarianceId": 151,
+                        "websites": {
+                            "id": 43,
+                            "url": "https://www.farfetch.com/lv/shopping/men/canada-goose-blue-hybridge-lite-padded-jacket-item-15506865.aspx?storeid=9959"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 152,
+                "varianceName": "XXL",
+                "price": "1,065 €",
+                "dateTime": "2022-12-14T11:49:20.987Z",
+                "itemsId": 69,
+                "websites": [
+                    {
+                        "id": 60,
+                        "websitesId": 43,
+                        "itemVarianceId": 152,
+                        "websites": {
+                            "id": 43,
+                            "url": "https://www.farfetch.com/lv/shopping/men/canada-goose-blue-hybridge-lite-padded-jacket-item-15506865.aspx?storeid=9959"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]
