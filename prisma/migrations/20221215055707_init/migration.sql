@@ -2,6 +2,7 @@
 CREATE TABLE "WebsiteUrls" (
     "id" SERIAL NOT NULL,
     "url" TEXT NOT NULL,
+    "name" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "WebsiteUrls_pkey" PRIMARY KEY ("id")
@@ -11,6 +12,9 @@ CREATE TABLE "WebsiteUrls" (
 CREATE TABLE "Items" (
     "id" SERIAL NOT NULL,
     "itemName" TEXT NOT NULL,
+    "details" TEXT,
+    "imageUrl" TEXT,
+    "highlights" TEXT[],
 
     CONSTRAINT "Items_pkey" PRIMARY KEY ("id")
 );
@@ -34,21 +38,13 @@ CREATE TABLE "Websites" (
 
 -- CreateTable
 CREATE TABLE "ItemVarianceOnWebsites" (
+    "id" SERIAL NOT NULL,
     "websitesId" INTEGER NOT NULL,
     "itemVarianceId" INTEGER NOT NULL,
-
-    CONSTRAINT "ItemVarianceOnWebsites_pkey" PRIMARY KEY ("websitesId","itemVarianceId")
-);
-
--- CreateTable
-CREATE TABLE "ItemDetails" (
-    "id" SERIAL NOT NULL,
     "price" TEXT NOT NULL,
     "dateTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "details" TEXT,
-    "websiteId" INTEGER NOT NULL,
 
-    CONSTRAINT "ItemDetails_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ItemVarianceOnWebsites_pkey" PRIMARY KEY ("websitesId","itemVarianceId")
 );
 
 -- CreateIndex
@@ -63,9 +59,6 @@ CREATE UNIQUE INDEX "ItemVariance_varianceName_key" ON "ItemVariance"("varianceN
 -- CreateIndex
 CREATE UNIQUE INDEX "Websites_url_key" ON "Websites"("url");
 
--- CreateIndex
-CREATE UNIQUE INDEX "ItemDetails_websiteId_key" ON "ItemDetails"("websiteId");
-
 -- AddForeignKey
 ALTER TABLE "ItemVariance" ADD CONSTRAINT "ItemVariance_itemsId_fkey" FOREIGN KEY ("itemsId") REFERENCES "Items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -74,6 +67,3 @@ ALTER TABLE "ItemVarianceOnWebsites" ADD CONSTRAINT "ItemVarianceOnWebsites_webs
 
 -- AddForeignKey
 ALTER TABLE "ItemVarianceOnWebsites" ADD CONSTRAINT "ItemVarianceOnWebsites_itemVarianceId_fkey" FOREIGN KEY ("itemVarianceId") REFERENCES "ItemVariance"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ItemDetails" ADD CONSTRAINT "ItemDetails_websiteId_fkey" FOREIGN KEY ("websiteId") REFERENCES "Websites"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

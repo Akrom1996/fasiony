@@ -249,39 +249,29 @@ export class FarfetchService {
   async storeItemInfoInDB(itemBody: ItemModel[]): Promise<any> {
     for (let i = 0; i < itemBody.length; i++) {
       const variance = [];
-      let data = await this.client.websites.findUnique({
-        where: {
-          url: itemBody[i].url,
-        },
-        select: {
-          id: true,
-        },
-      });
       const itemData = await this.client.items.findUnique({
         where: {
           itemName: itemBody[i].item,
         },
+        include: {
+          variance: true,
+        },
       });
-      if (!data) {
-        data = await this.client.websites.create({
-          data: {
-            url: itemBody[i].url,
-          },
-          select: {
-            id: true,
-          },
-        });
-      }
       itemBody[i].sizePrice.forEach(async (element) => {
         variance.push({
           varianceName: element.size,
-          price: element.sizePrice,
           websites: {
             create: [
               {
+                price: element.sizePrice,
                 websites: {
-                  connect: {
-                    id: data.id,
+                  connectOrCreate: {
+                    where: {
+                      url: itemBody[i].url,
+                    },
+                    create: {
+                      url: itemBody[i].url,
+                    },
                   },
                 },
               },
@@ -301,7 +291,78 @@ export class FarfetchService {
             },
           },
         });
-      else console.log(itemData);
+      else {
+        itemBody[i].sizePrice.forEach(async (element) => {
+          if (
+            itemData.variance.filter(
+              (data) => data.varianceName == element.size,
+            ).length == 0
+          ) {
+            const result = await this.client.items.update({
+              where: {
+                itemName: itemBody[i].item,
+              },
+              include: {
+                variance: true,
+              },
+              data: {
+                variance: {
+                  connectOrCreate: {
+                    where: {
+                      varianceName: element.size,
+                    },
+                    create: {
+                      varianceName: element.size,
+                      websites: {
+                        create: {
+                          price: element.sizePrice,
+                          websites: {
+                            connectOrCreate: {
+                              where: { url: itemBody[i].url },
+                              create: {
+                                url: itemBody[i].url,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+            console.log(result);
+          } else {
+            await this.client.items.update({
+              where: {
+                itemName: itemBody[i].item,
+              },
+              include: {
+                variance: true,
+              },
+              data: {
+                variance: {
+                  connect: {
+                    varianceName: element.size,
+                  },
+                  create: {
+                    websites: {
+                      create: {
+                        price: element.sizePrice,
+                        websites: {
+                          connect: {
+                            url: itemBody[i].url,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          }
+        });
+      }
     }
     // await this.client.items.findMany().then((data) => console.log(data));
     return 'success';
