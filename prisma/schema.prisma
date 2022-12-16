@@ -21,8 +21,16 @@ model Items {
   imageUrl   String?
   highlights String[]
   variance   ItemVariance[]
+  prices     Prices[]
 }
 
+model Prices {
+  id Int @id @default(autoincrement())
+  price String?
+  dateTime       DateTime?  @default(now())
+  itemsId Int
+  item Items @relation(fields: [itemsId], references: [id])
+}
 model ItemVariance {
   id           Int                      @id @default(autoincrement())
   varianceName String                   @unique
@@ -46,5 +54,6 @@ model ItemVarianceOnWebsites {
   price          String
   dateTime       DateTime     @default(now())
 
-  @@id([websitesId, itemVarianceId])
+  @@id([websitesId, itemVarianceId, dateTime])
 }
+

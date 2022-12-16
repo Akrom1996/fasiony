@@ -70,7 +70,6 @@ export class FarfetchService {
     console.log(result);
     return data;
   }
-
   async startItemCrawling(page, url: string): Promise<any> {
     const highlightList = [];
     const list = [];
@@ -228,7 +227,9 @@ export class FarfetchService {
     }
     await browser.close();
     // TODO: store item info into DB
-    return Promise.resolve(results);
+    const result = await this.storeItemInfoInDB(results);
+    console.log('results', results);
+    return result;
   }
   async getAllItemsFormDB(): Promise<Items[]> {
     const data = await this.client.items.findMany({
@@ -242,13 +243,16 @@ export class FarfetchService {
             },
           },
         },
+        prices: true,
       },
     });
     return data;
   }
   async storeItemInfoInDB(itemBody: ItemModel[]): Promise<any> {
+    console.log(itemBody[0].item);
     for (let i = 0; i < itemBody.length; i++) {
       const variance = [];
+      let price;
       const itemData = await this.client.items.findUnique({
         where: {
           itemName: itemBody[i].item,
@@ -279,26 +283,56 @@ export class FarfetchService {
           },
         });
       }); // creating variance with url n:m connection
-      if (!itemData)
-        await this.client.items.create({
-          data: {
-            itemName: itemBody[i].item,
-            details: itemBody[i].details,
-            imageUrl: itemBody[i].imageUrl,
-            highlights: itemBody[i].highlights,
-            variance: {
-              create: variance,
-            },
+      if (itemBody[i].sizePrice.length == 0) {
+        price = itemBody[i].price;
+      }
+      if (!itemData) {
+        const data = {
+          itemName: itemBody[i].item,
+          details: itemBody[i].details,
+          imageUrl: itemBody[i].imageUrl,
+          highlights: itemBody[i].highlights,
+          variance: {
+            create: [],
           },
+        };
+        if (price)
+          data['prices'] = {
+            create: [
+              {
+                price: price,
+              },
+            ],
+          };
+        await this.client.items.create({
+          data: data,
         });
-      else {
+      } else {
+        if (itemBody[i].sizePrice.length == 0) {
+          await this.client.items.update({
+            where: {
+              itemName: itemBody[i].item,
+            },
+            include: {
+              prices: true,
+            },
+            data: {
+              prices: {
+                create: {
+                  price: itemBody[i].price,
+                },
+              },
+            },
+          });
+        }
         itemBody[i].sizePrice.forEach(async (element) => {
           if (
             itemData.variance.filter(
               (data) => data.varianceName == element.size,
             ).length == 0
           ) {
-            const result = await this.client.items.update({
+            // if new vairance NOT exists create new variance
+            await this.client.items.update({
               where: {
                 itemName: itemBody[i].item,
               },
@@ -331,8 +365,8 @@ export class FarfetchService {
                 },
               },
             });
-            console.log(result);
           } else {
+            // else new variance exists add new price of variance
             await this.client.items.update({
               where: {
                 itemName: itemBody[i].item,
@@ -345,15 +379,22 @@ export class FarfetchService {
                   connect: {
                     varianceName: element.size,
                   },
-                  create: {
-                    websites: {
-                      create: {
-                        price: element.sizePrice,
-                        websites: {
-                          connect: {
-                            url: itemBody[i].url,
+                  update: {
+                    where: {
+                      varianceName: element.size,
+                    },
+                    data: {
+                      websites: {
+                        create: [
+                          {
+                            price: element.sizePrice,
+                            websites: {
+                              connect: {
+                                url: itemBody[i].url,
+                              },
+                            },
                           },
-                        },
+                        ],
                       },
                     },
                   },

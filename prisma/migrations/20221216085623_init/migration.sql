@@ -44,7 +44,7 @@ CREATE TABLE "ItemVarianceOnWebsites" (
     "price" TEXT NOT NULL,
     "dateTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "ItemVarianceOnWebsites_pkey" PRIMARY KEY ("websitesId","itemVarianceId")
+    CONSTRAINT "ItemVarianceOnWebsites_pkey" PRIMARY KEY ("websitesId","itemVarianceId","dateTime")
 );
 
 -- CreateIndex
@@ -58,6 +58,9 @@ CREATE UNIQUE INDEX "ItemVariance_varianceName_key" ON "ItemVariance"("varianceN
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Websites_url_key" ON "Websites"("url");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ItemVarianceOnWebsites_dateTime_key" ON "ItemVarianceOnWebsites"("dateTime");
 
 -- AddForeignKey
 ALTER TABLE "ItemVariance" ADD CONSTRAINT "ItemVariance_itemsId_fkey" FOREIGN KEY ("itemsId") REFERENCES "Items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
