@@ -10,7 +10,7 @@ RUN apk add --no-cache libc6-compat \
   ttf-freefont
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
   PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-ENV DATABASE_URL=postgresql://postgres:1234admin@172.22.0.2:5432/fasiony?schema=public
+ENV DATABASE_URL=postgresql://postgres:1234admin@fasiony.chmboteymrgw.ap-northeast-1.rds.amazonaws.com:5432/fasiony?schema=public
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -28,7 +28,12 @@ COPY . .
 
 # Creates a "dist" folder with the production build
 RUN npx prisma generate
-# RUN npx prisma migrate dev
+
+# Use this command if migration is already DONE
+RUN npx prisma migrate deploy
+# Use command below if the DB newly created
+# RUN npx prisma migrate deploy dev --name init
+
 RUN npm run build
 
 EXPOSE 3002

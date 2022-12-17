@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Items, PrismaClient } from '@prisma/client';
-import { rejects } from 'assert';
-import { url } from 'inspector';
 import puppeteer from 'puppeteer-extra';
 import { args, isDocker, userAgent } from 'src/config/service-config';
 import { ItemModel } from './dto/farfetch.service.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pluginStealth = require('puppeteer-extra-plugin-stealth');
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class FarfetchService {
@@ -200,6 +199,7 @@ export class FarfetchService {
       }
     });
   }
+  @Cron('10 * * * * *')
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls
@@ -227,8 +227,8 @@ export class FarfetchService {
     }
     await browser.close();
     // TODO: store item info into DB
+    // console.log('results', results);
     const result = await this.storeItemInfoInDB(results);
-    console.log('results', results);
     return result;
   }
   async getAllItemsFormDB(): Promise<Items[]> {
@@ -308,6 +308,7 @@ export class FarfetchService {
           data: data,
         });
       } else {
+        // if variance of Item NOT exists (only one size)
         if (itemBody[i].sizePrice.length == 0) {
           await this.client.items.update({
             where: {
@@ -420,5 +421,9 @@ export class FarfetchService {
         .then((data) => resolve(data))
         .catch((err) => reject(err));
     });
+  }
+  @Cron('10 * * * * *')
+  handleCron() {
+    this.log.debug('Called every 30 seconds');
   }
 }
