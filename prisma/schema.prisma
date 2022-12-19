@@ -31,7 +31,7 @@ model Prices {
   itemsId  Int
   item     Items      @relation(fields: [itemsId], references: [id])
   // websiteId     Int
-  websites Websites[] //@relation(fields: [websiteId], references: [id])
+  website Websites //@relation(fields: [websiteId], references: [id])
 }
 
 model ItemVariance {

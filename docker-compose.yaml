@@ -1,12 +1,12 @@
 version: "3.9"
 services:
-  # fasiony:
-  #   build: ./
-  #   container_name: fasiony-service
-  #   # network_mode: bridge
-  #   ports: 
-  #     - "5001:3002"
-  #   restart: unless-stopped
+  fasiony:
+    build: ./
+    container_name: fasiony-service
+    # network_mode: bridge
+    ports: 
+      - "5001:3002"
+    restart: unless-stopped
   #   depends_on:
   #     - db
   #   networks:
