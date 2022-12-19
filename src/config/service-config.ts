@@ -1,6 +1,6 @@
 export const numberOfTriesOnError = 10;
 export const numberOfTriesForCaptcha = 10;
-export const isDocker = () => true;
+export const isDocker = () => false;
 export const userAgent = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',

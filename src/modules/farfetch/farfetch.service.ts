@@ -61,6 +61,7 @@ export class FarfetchService {
     await page.setUserAgent(
       userAgent[Math.floor(Math.random() * userAgent.length)],
     );
+    await page.setDefaultNavigationTimeout(50000);
     const data = await this.startItemCrawling(page, url).catch((err) =>
       Promise.reject(err),
     );
@@ -74,6 +75,7 @@ export class FarfetchService {
     const list = [];
     let price;
     return new Promise(async (resolve, reject) => {
+      this.log.log('Starting startItemCrawling');
       try {
         await page.goto(url);
         await page.waitForSelector(
@@ -199,12 +201,16 @@ export class FarfetchService {
       }
     });
   }
-  @Cron('10 * * * * *')
+  // @Cron('10 * * * * *')
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls
       .findMany()
       .catch((err) => Promise.reject(err));
+    this.log.log(`Number of items to crawl ${urls.length}`);
+    if (!urls.length) {
+      return 'No urls saved in DB';
+    }
     const browser = await puppeteer.launch({
       executablePath: isDocker()
         ? '/usr/bin/chromium-browser'
@@ -243,13 +249,18 @@ export class FarfetchService {
             },
           },
         },
-        prices: true,
+        prices: {
+          include: {
+            websites: true,
+          },
+        },
       },
     });
     return data;
   }
   async storeItemInfoInDB(itemBody: ItemModel[]): Promise<any> {
-    console.log(itemBody[0].item);
+    this.log.log('Starting storeItemInfoInDB');
+    console.log(itemBody.length);
     for (let i = 0; i < itemBody.length; i++) {
       const variance = [];
       let price;
@@ -292,17 +303,28 @@ export class FarfetchService {
           details: itemBody[i].details,
           imageUrl: itemBody[i].imageUrl,
           highlights: itemBody[i].highlights,
-          variance: {
-            create: [],
-          },
         };
         if (price)
           data['prices'] = {
             create: [
               {
                 price: price,
+                websites: {
+                  connectOrCreate: {
+                    where: {
+                      url: itemBody[i].url,
+                    },
+                    create: {
+                      url: itemBody[i].url,
+                    },
+                  },
+                },
               },
             ],
+          };
+        else
+          data['variance'] = {
+            create: variance,
           };
         await this.client.items.create({
           data: data,
@@ -321,6 +343,14 @@ export class FarfetchService {
               prices: {
                 create: {
                   price: itemBody[i].price,
+                  websites: {
+                    connectOrCreate: {
+                      where: { url: itemBody[i].url },
+                      create: {
+                        url: itemBody[i].url,
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -421,9 +451,5 @@ export class FarfetchService {
         .then((data) => resolve(data))
         .catch((err) => reject(err));
     });
-  }
-  @Cron('10 * * * * *')
-  handleCron() {
-    this.log.debug('Called every 30 seconds');
   }
 }
