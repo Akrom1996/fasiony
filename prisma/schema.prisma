@@ -17,6 +17,7 @@ model WebsiteUrls {
 model Items {
   id         Int            @id @default(autoincrement())
   itemName   String         @unique
+  brandName  String
   details    String?
   imageUrl   String?
   highlights String[]

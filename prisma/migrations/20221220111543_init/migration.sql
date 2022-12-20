@@ -12,6 +12,7 @@ CREATE TABLE "WebsiteUrls" (
 CREATE TABLE "Items" (
     "id" SERIAL NOT NULL,
     "itemName" TEXT NOT NULL,
+    "brandName" TEXT NOT NULL,
     "details" TEXT,
     "imageUrl" TEXT,
     "highlights" TEXT[],
@@ -25,6 +26,7 @@ CREATE TABLE "Prices" (
     "price" TEXT,
     "dateTime" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "itemsId" INTEGER NOT NULL,
+    "websiteId" INTEGER,
 
     CONSTRAINT "Prices_pkey" PRIMARY KEY ("id")
 );
@@ -42,7 +44,6 @@ CREATE TABLE "ItemVariance" (
 CREATE TABLE "Websites" (
     "id" SERIAL NOT NULL,
     "url" TEXT NOT NULL,
-    "priceId" INTEGER,
 
     CONSTRAINT "Websites_pkey" PRIMARY KEY ("id")
 );
@@ -73,17 +74,14 @@ CREATE UNIQUE INDEX "ItemVariance_varianceName_key" ON "ItemVariance"("varianceN
 -- CreateIndex
 CREATE UNIQUE INDEX "Websites_url_key" ON "Websites"("url");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Websites_priceId_key" ON "Websites"("priceId");
-
 -- AddForeignKey
 ALTER TABLE "Prices" ADD CONSTRAINT "Prices_itemsId_fkey" FOREIGN KEY ("itemsId") REFERENCES "Items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ItemVariance" ADD CONSTRAINT "ItemVariance_itemsId_fkey" FOREIGN KEY ("itemsId") REFERENCES "Items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Prices" ADD CONSTRAINT "Prices_websiteId_fkey" FOREIGN KEY ("websiteId") REFERENCES "Websites"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Websites" ADD CONSTRAINT "Websites_priceId_fkey" FOREIGN KEY ("priceId") REFERENCES "Prices"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ItemVariance" ADD CONSTRAINT "ItemVariance_itemsId_fkey" FOREIGN KEY ("itemsId") REFERENCES "Items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ItemVarianceOnWebsites" ADD CONSTRAINT "ItemVarianceOnWebsites_websitesId_fkey" FOREIGN KEY ("websitesId") REFERENCES "Websites"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

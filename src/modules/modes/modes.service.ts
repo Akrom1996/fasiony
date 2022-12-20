@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Items, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import puppeteer from 'puppeteer-extra';
 import { args, isDocker, userAgent } from 'src/config/service-config';
-import { ItemModel } from '../dto/item.model.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pluginStealth = require('puppeteer-extra-plugin-stealth');
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { storeItemInfoInDB } from '../db/store.db';
 
 @Injectable()
-export class FarfetchService {
+export class ModesService {
   private log: Logger;
   private client: PrismaClient;
   constructor() {
@@ -47,149 +46,110 @@ export class FarfetchService {
   //     ), // discount percent
   //   };
   // }
-
-  async getItemDataByUrl(url: string) {
-    this.log.log(`Starting farfetch with ${url}`);
-    const browser = await puppeteer.launch({
-      executablePath: isDocker()
-        ? '/usr/bin/chromium-browser'
-        : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-      headless: isDocker() ? true : false,
-      args: args,
-    });
-    const [page] = await browser.pages();
-    await page.setJavaScriptEnabled(true);
-    await page.setUserAgent(
-      userAgent[Math.floor(Math.random() * userAgent.length)],
-    );
-    await page.setDefaultNavigationTimeout(50000);
-    const data = await this.startItemCrawlingFarfetch(page, url).catch((err) =>
-      Promise.reject(err),
-    );
-    await browser.close();
-    const result = await storeItemInfoInDB([data], this.client);
-    console.log(result);
-    return data;
-  }
-  async startItemCrawlingFarfetch(page, url: string): Promise<any> {
+  async startItemCrawlingModes(page, url: string): Promise<any> {
     const highlightList = [];
     const list = [];
     let price;
+    let brandName;
+    let itemName;
     return new Promise(async (resolve, reject) => {
-      this.log.log('Starting startItemCrawlingFarfetch');
+      this.log.log('Starting startItemCrawlingModes');
       try {
         await page.goto(url);
-        const nameSelector =
-          '#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1q071fb > div.ltr-ayy0e9 > div > h1';
-        await page.waitForSelector(nameSelector + ' > a'); // wait for loading brand name
-        const brandName = await this.getSelectorText(
+        await page.waitForSelector(
+          '#root > div > main > div.NyQXC > div.PtZTz > div > a',
+        ); // wait for loading item name
+        brandName = await this.getSelectorText(
           page,
-          nameSelector + ' > a',
+          '#root > div > main > div.NyQXC > div.PtZTz > div > a',
         ); // get brand name
         this.log.log(brandName);
-        const itemName = await this.getSelectorText(
-          page,
-          nameSelector + ' > p',
-        ); // get item name
-        this.log.log(itemName);
         const priceSelector =
-          '#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1q071fb > div.ltr-10c5n0l.eev02n90'; // discount or sale
+          '#root > div > main > div.NyQXC > div.PtZTz > p._3p-Yz'; // discount or sale
         const saleExists = await this.checkSelectorForExistance(
           page,
-          priceSelector + ' > p.ltr-194u1uv-Heading.e54eo9p0',
+          priceSelector + ' > span._1WTWk',
         ); // if discount or sale exists
         if (saleExists) {
           price = await this.getSelectorText(
             page,
-            priceSelector + ' > p.ltr-194u1uv-Heading.e54eo9p0',
+            priceSelector + ' > span._677BI', // for original price add this ' > span._1WTWk',
           );
         } else {
           // price = await this.priceWithSale(page, priceSelector); // get price with sales
-          price = await this.getSelectorText(
-            page,
-            priceSelector + ' > p.ltr-o8ptjq-Heading.ex663c10',
-          );
+          price = await this.getSelectorText(page, priceSelector + ' > span');
         }
         this.log.log(`price ${price}`);
+        itemName = await this.getSelectorText(
+          page,
+          '#root > div > main > div.NyQXC > div.PtZTz > p._1CC2G._3XCDb',
+        ); // get item name
+        this.log.log(`brand name ${itemName}`);
         const sizeSelector =
-          '#content > div > div.ltr-wckt8b > div.ltr-1rujwwh > div > div > div.ltr-1m7d7di > div.ltr-1m7d7di > div';
+          '#root > div > main > div.NyQXC > div:nth-child(2) > div > div._2ZHiC '; //'> div:nth-child(5) > ol
+        await page.waitForSelector(sizeSelector);
         const sizeExists = await page
-          .$eval(sizeSelector, () => true)
+          .$eval(sizeSelector + ' > div:nth-child(5) > ol', () => true)
           .catch(() => false); // check for size selector exists
         this.log.log(`other sizes exist: ${sizeExists}`);
         if (sizeExists) {
-          await (await page.$(sizeSelector)).click();
-          await page.waitForTimeout(600);
+          //   await (await page.$(sizeSelector)).click();
+          //   await page.waitForTimeout(600);
           let i = 1;
-          while (i < 50) {
-            const liSelector = `/html/body/div[2]/div[3]/div[2]/div[3]/div/ul/li[${i}]`;
+          while (i < 10) {
+            const liSelector =
+              sizeSelector + ` > div:nth-child(5) > ol > li:nth-child(${i})`;
             if (
-              await this.getXPathText(page, `${liSelector}/p`)
+              await this.getSelectorText(page, `${liSelector} > button`)
                 .then(() => true)
                 .catch(() => false)
             ) {
               const payload = {
                 size: (
-                  await this.getXPathText(page, `${liSelector}/p[1]`)
+                  await this.getSelectorText(page, `${liSelector} > button`)
                 ).trim(),
-                sizePrice:
-                  (await this.getXPathText(page, `${liSelector}/div`)) || price, //newPriceWithDiscount,
+                sizePrice: price,
               };
               list.push(payload);
             }
             i++;
           }
         }
-        const firstImageSelector =
-          '#content > div > div.ltr-wckt8b > div.ltr-rcjmp3 > div > div:nth-child(1) > button';
+        const firstImageSelector = '#root > div > main > div._37T5Z._2PdLC';
         const firstImageExists = await this.checkSelectorForExistance(
           page,
           firstImageSelector,
         );
         let imageSrc = [];
         if (firstImageExists) {
-          imageSrc = await page.$$eval(firstImageSelector + '> img', (imgs) =>
-            imgs.map((img) => img.getAttribute('src')),
+          imageSrc = await page.$$eval(
+            firstImageSelector +
+              ' > div._10LDn > div:nth-child(1) > span > img',
+            (imgs) => imgs.map((img) => img.getAttribute('src')),
           );
           this.log.log(`image source ${imageSrc}`);
         }
-        const mainDetailsSelector =
-          '#tabpanel-0 > div > div.ltr-182wjbq.exjav153';
+        const mainDetailsSelector = '#description-info-content > div';
         await page.waitForSelector(mainDetailsSelector);
         let details;
         if (
           await this.checkSelectorForExistance(
             page,
-            mainDetailsSelector + ' > div > div.ltr-4y8w0i-Body.e1s5vycj0 > p',
+            mainDetailsSelector + ' > div',
           )
         )
+          // check details
           details = await this.getSelectorText(
             page,
-            mainDetailsSelector + ' > div > div.ltr-4y8w0i-Body.e1s5vycj0 > p',
+            mainDetailsSelector + ' > div',
           );
         this.log.log(`details ${details}`);
-        await page
-          .waitForSelector(
-            '#tabpanel-0 > div > div.ltr-182wjbq.exjav153 > div > div.ltr-fzg9du.e1yiqd0',
-          )
-          .catch((err) => console.log(err));
-        if (
-          await this.checkSelectorForExistance(
-            page,
-            '#tabpanel-0 > div > div.ltr-182wjbq.exjav153 > div > div.ltr-fzg9du.e1yiqd0',
-          ) // check highlights
-        ) {
-          let counter = 1;
-          while (counter < 20) {
-            const highlightSelector = `#tabpanel-0 > div > div.ltr-182wjbq.exjav153 > div > div.ltr-fzg9du.e1yiqd0 > ul > li:nth-child(${counter})`;
-            if (await this.checkSelectorForExistance(page, highlightSelector)) {
-              highlightList.push(
-                (await this.getSelectorText(page, highlightSelector)).trim(),
-              );
-            }
-            counter++;
-          }
-        }
+        (await this.getSelectorText(page, '#details-info-content > div > div'))
+          .split('-')
+          .forEach((element) => {
+            if (element.length)
+              highlightList.push(element.trim().replace(';', ''));
+          });
         this.log.log(`highlights of item ${highlightList}`);
 
         resolve({
@@ -208,18 +168,38 @@ export class FarfetchService {
       }
     });
   }
-  @Cron('10 * * * * *')
+
+  async getItemDataByUrl(url: string) {
+    this.log.log(`Starting farfetch with ${url}`);
+    const browser = await puppeteer.launch({
+      executablePath: isDocker()
+        ? '/usr/bin/chromium-browser'
+        : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      headless: isDocker() ? true : false,
+      args: args,
+    });
+    const [page] = await browser.pages();
+    await page.setJavaScriptEnabled(true);
+    await page.setUserAgent(
+      userAgent[Math.floor(Math.random() * userAgent.length)],
+    );
+    await page.setDefaultNavigationTimeout(50000);
+    const data = await this.startItemCrawlingModes(page, url).catch((err) =>
+      Promise.reject(err),
+    );
+    await browser.close();
+    return data;
+  }
+
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls
       .findMany()
       .catch((err) => Promise.reject(err));
-    const farfetchUrls = urls.filter((url) =>
-      url.url.indexOf('www.farfetch.com'),
-    );
-    this.log.log(`Number of items to crawl ${farfetchUrls.length}`);
-    if (!farfetchUrls.length) {
-      return 'No farfetchUrls saved in DB';
+    const modesUrls = urls.filter((url) => url.url.indexOf('www.modes.com'));
+    this.log.log(`Number of items to crawl ${modesUrls.length}`);
+    if (!modesUrls.length) {
+      return 'No modesUrls saved in DB';
     }
     const browser = await puppeteer.launch({
       executablePath: isDocker()
@@ -233,11 +213,11 @@ export class FarfetchService {
     await page.setUserAgent(
       userAgent[Math.floor(Math.random() * userAgent.length)],
     );
-    for (let urlCounter = 0; urlCounter < farfetchUrls.length; urlCounter++) {
-      this.log.log(`Starting farfetch with ${farfetchUrls[urlCounter].url}`);
-      const data = await this.startItemCrawlingFarfetch(
+    for (let urlCounter = 0; urlCounter < modesUrls.length; urlCounter++) {
+      this.log.log(`Starting modes with ${modesUrls[urlCounter].url}`);
+      const data = await this.startItemCrawlingModes(
         page,
-        farfetchUrls[urlCounter].url,
+        modesUrls[urlCounter].url,
       ).catch((err) => Promise.reject(err));
       results.push(data);
     }
