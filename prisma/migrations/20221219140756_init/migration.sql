@@ -65,10 +65,16 @@ CREATE UNIQUE INDEX "WebsiteUrls_url_key" ON "WebsiteUrls"("url");
 CREATE UNIQUE INDEX "Items_itemName_key" ON "Items"("itemName");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Prices_id_key" ON "Prices"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ItemVariance_varianceName_key" ON "ItemVariance"("varianceName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Websites_url_key" ON "Websites"("url");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Websites_priceId_key" ON "Websites"("priceId");
 
 -- AddForeignKey
 ALTER TABLE "Prices" ADD CONSTRAINT "Prices_itemsId_fkey" FOREIGN KEY ("itemsId") REFERENCES "Items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

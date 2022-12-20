@@ -201,7 +201,7 @@ export class FarfetchService {
       }
     });
   }
-  @Cron('10 * * * * *')
+  // @Cron('10 * * * * *')
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls
@@ -251,7 +251,7 @@ export class FarfetchService {
         },
         prices: {
           include: {
-            websites: true,
+            website: true,
           },
         },
       },
@@ -309,7 +309,7 @@ export class FarfetchService {
             create: [
               {
                 price: price,
-                websites: {
+                website: {
                   connectOrCreate: {
                     where: {
                       url: itemBody[i].url,
@@ -343,7 +343,7 @@ export class FarfetchService {
               prices: {
                 create: {
                   price: itemBody[i].price,
-                  websites: {
+                  website: {
                     connectOrCreate: {
                       where: { url: itemBody[i].url },
                       create: {

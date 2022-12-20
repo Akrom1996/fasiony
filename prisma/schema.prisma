@@ -25,13 +25,13 @@ model Items {
 }
 
 model Prices {
-  id       Int        @id @default(autoincrement())
-  price    String?
-  dateTime DateTime?  @default(now())
-  itemsId  Int
-  item     Items      @relation(fields: [itemsId], references: [id])
-  // websiteId     Int
-  website Websites //@relation(fields: [websiteId], references: [id])
+  id        Int       @id @unique @default(autoincrement())
+  price     String?
+  dateTime  DateTime? @default(now())
+  itemsId   Int
+  item      Items     @relation(fields: [itemsId], references: [id])
+  websiteId Int?
+  website   Websites? @relation(fields: [websiteId], references: [id])
 }
 
 model ItemVariance {
@@ -46,8 +46,8 @@ model Websites {
   id           Int                      @id @default(autoincrement())
   url          String                   @unique
   itemVariance ItemVarianceOnWebsites[]
-  priceId      Int?
-  price        Prices?                  @relation(fields: [priceId], references: [id])
+  // priceId      Int?                     @unique
+  price        Prices[] // @relation(fields: [priceId], references: [id])
   // itemPrices    ItemPricesOnWebsites[]
 }
 
