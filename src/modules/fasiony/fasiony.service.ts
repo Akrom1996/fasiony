@@ -16,9 +16,13 @@ export class FasionyService {
       include: {
         variance: {
           include: {
-            websites: {
+            varianceName: {
               include: {
-                websites: true,
+                websites: {
+                  include: {
+                    websites: true,
+                  },
+                },
               },
             },
           },

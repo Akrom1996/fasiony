@@ -15,13 +15,13 @@ model WebsiteUrls {
 }
 
 model Items {
-  id         Int            @id @default(autoincrement())
-  itemName   String         @unique
+  id         Int              @id @default(autoincrement())
+  itemName   String           @unique
   brandName  String
   details    String?
   imageUrl   String?
   highlights String[]
-  variance   ItemVariance[]
+  variance   VarianceOnItem[]
   prices     Prices[]
 }
 
@@ -34,22 +34,29 @@ model Prices {
   websiteId Int?
   website   Websites? @relation(fields: [websiteId], references: [id])
 }
+model VarianceOnItem {
+  id             Int          @default(autoincrement())
+  variance           Items        @relation(fields: [itemId], references: [id])
+  itemId         Int // relation scalar field (used in the `@relation` attribute above)
+  varianceName   ItemVariance @relation(fields: [itemVarianceId], references: [id])
+  itemVarianceId Int // relation scalar field (used in the `@relation` attribute above)
 
+  @@id([itemId, itemVarianceId])
+}
 model ItemVariance {
   id           Int                      @id @default(autoincrement())
   varianceName String                   @unique
-  itemsId      Int
-  item         Items                    @relation(fields: [itemsId], references: [id])
+  // itemsId      Int
+  // item         Items                    @relation(fields: [itemsId], references: [id])
   websites     ItemVarianceOnWebsites[]
+  item         VarianceOnItem[]
 }
 
 model Websites {
   id           Int                      @id @default(autoincrement())
   url          String                   @unique
   itemVariance ItemVarianceOnWebsites[]
-  // priceId      Int?                     @unique
   price        Prices[] // @relation(fields: [priceId], references: [id])
-  // itemPrices    ItemPricesOnWebsites[]
 }
 
 model ItemVarianceOnWebsites {
@@ -64,14 +71,4 @@ model ItemVarianceOnWebsites {
   @@id([websitesId, itemVarianceId, dateTime])
 }
 
-// model ItemPricesOnWebsites {
-//   id             Int          @default(autoincrement())
-//   websites       Websites     @relation(fields: [websitesId], references: [id])
-//   websitesId     Int // relation scalar field (used in the `@relation` attribute above)
-//   itemPrice      Prices @relation(fields: [itemPriceId], references: [id])
-//   itemPriceId Int // relation scalar field (used in the `@relation` attribute above)
-//   price          String
-//   dateTime       DateTime     @default(now())
 
-//   @@id([websitesId, itemPriceId, dateTime])
-// }
