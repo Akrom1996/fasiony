@@ -16,7 +16,7 @@ export class FasionyService {
       include: {
         variance: {
           include: {
-            varianceName: {
+            varianceNameOnItem: {
               include: {
                 websites: {
                   include: {

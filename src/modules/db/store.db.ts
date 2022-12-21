@@ -14,43 +14,39 @@ export const storeItemInfoInDB = async (
         itemName: itemBody[i].item,
       },
       include: {
-        variance: true,
+        variance: {
+          include: {
+            varianceNameOnItem: {
+              include: {
+                websites: true,
+              },
+            },
+          },
+        },
       },
     });
     itemBody[i].sizePrice.forEach(async (element) => {
-      console.log(element.size);
       variance.push({
-        varianceName: {
-          connectOrCreate: {
-            where: {
-              varianceName: element.size,
-            },
-            create: [
-              {
-                varianceName: {
-                  create: {
-                    varianceName: element.size,
-                    websites: {
-                      create: [
-                        {
-                          price: element.sizePrice,
-                          websites: {
-                            connectOrCreate: {
-                              where: {
-                                url: itemBody[i].url,
-                              },
-                              create: {
-                                url: itemBody[i].url,
-                              },
-                            },
-                          },
-                        },
-                      ],
+        varianceNameOnItem: {
+          create: {
+            varianceName: element.size,
+            websites: {
+              create: [
+                {
+                  price: element.sizePrice,
+                  websites: {
+                    connectOrCreate: {
+                      where: {
+                        url: itemBody[i].url,
+                      },
+                      create: {
+                        url: itemBody[i].url,
+                      },
                     },
                   },
                 },
-              },
-            ],
+              ],
+            },
           },
         },
       });
@@ -90,184 +86,215 @@ export const storeItemInfoInDB = async (
         data['variance'] = {
           create: variance,
         };
-      // await client.items.create({
-      //   data: data,
-      // });
       await client.items.create({
-        data: {
-          itemName: itemBody[i].item,
-          brandName: itemBody[i].brand,
-          details: itemBody[i].details,
-          imageUrl: itemBody[i].imageUrl,
-          highlights: itemBody[i].highlights,
-          variance: {
-            create: [
-              {
-                varianceName: {
-                  connectOrCreate: {
-                    where: {
-                      varianceName: itemBody[i].sizePrice[0].size,
-                    },
-                    create: {
-                      varianceName: itemBody[i].sizePrice[0].size,
-                      websites: {
-                        create: [
-                          {
-                            price: itemBody[i].sizePrice[0].sizePrice,
-                            websites: {
-                              connectOrCreate: {
-                                where: {
-                                  url: itemBody[i].url,
-                                },
-                                create: {
-                                  url: itemBody[i].url,
-                                },
-                              },
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                varianceName: {
-                  connectOrCreate: {
-                    where: {
-                      varianceName: itemBody[i].sizePrice[1].size,
-                    },
-                    create: {
-                      varianceName: itemBody[i].sizePrice[1].size,
-                      websites: {
-                        create: [
-                          {
-                            price: itemBody[i].sizePrice[1].sizePrice,
-                            websites: {
-                              connectOrCreate: {
-                                where: {
-                                  url: itemBody[i].url,
-                                },
-                                create: {
-                                  url: itemBody[i].url,
-                                },
-                              },
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        },
+        data: data,
       });
     } else {
       // if variance of Item NOT exists (only one size)
-      // if (itemBody[i].sizePrice.length == 0) {
-      //   await client.items.update({
-      //     where: {
-      //       itemName: itemBody[i].item,
-      //     },
-      //     include: {
-      //       prices: true,
-      //     },
-      //     data: {
-      //       prices: {
-      //         create: {
-      //           price: itemBody[i].price,
-      //           website: {
-      //             connectOrCreate: {
-      //               where: { url: itemBody[i].url },
-      //               create: {
-      //                 url: itemBody[i].url,
-      //               },
-      //             },
-      //           },
-      //         },
-      //       },
-      //     },
-      //   });
-      // }
-      // itemBody[i].sizePrice.forEach(async (element) => {
-      //   if (
-      //     itemData.variance.filter((data) => data.varianceName == element.size)
-      //       .length == 0
-      //   ) {
-      //     // if new vairance NOT exists create new variance
-      //     await client.items.update({
-      //       where: {
-      //         itemName: itemBody[i].item,
-      //       },
-      //       include: {
-      //         variance: true,
-      //       },
-      //       data: {
-      //         variance: {
-      //           connectOrCreate: {
-      //             where: {
-      //               varianceName: element.size,
-      //             },
-      //             create: {
-      //               varianceName: element.size,
-      //               websites: {
-      //                 create: {
-      //                   price: element.sizePrice,
-      //                   websites: {
-      //                     connectOrCreate: {
-      //                       where: { url: itemBody[i].url },
-      //                       create: {
-      //                         url: itemBody[i].url,
-      //                       },
-      //                     },
-      //                   },
-      //                 },
-      //               },
-      //             },
-      //           },
-      //         },
-      //       },
-      //     });
-      //   } else {
-      //     // else new variance exists add new price of variance
-      //     await client.items.update({
-      //       where: {
-      //         itemName: itemBody[i].item,
-      //       },
-      //       include: {
-      //         variance: true,
-      //       },
-      //       data: {
-      //         variance: {
-      //           connect: {
-      //             varianceName: element.size,
-      //           },
-      //           update: {
-      //             where: {
-      //               varianceName: element.size,
-      //             },
-      //             data: {
-      //               websites: {
-      //                 create: [
-      //                   {
-      //                     price: element.sizePrice,
-      //                     websites: {
-      //                       connect: {
-      //                         url: itemBody[i].url,
-      //                       },
-      //                     },
-      //                   },
-      //                 ],
-      //               },
-      //             },
-      //           },
-      //         },
-      //       },
-      //     });
-      //   }
-      // });
+      if (itemBody[i].sizePrice.length == 0) {
+        await client.items.update({
+          where: {
+            itemName: itemBody[i].item,
+          },
+          include: {
+            prices: true,
+          },
+          data: {
+            prices: {
+              create: {
+                price: itemBody[i].price,
+                website: {
+                  connectOrCreate: {
+                    where: { url: itemBody[i].url },
+                    create: {
+                      url: itemBody[i].url,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+      // itemData.variance.forEach((element) =>
+      //   console.log(element.varianceNameOnItem.varianceName),
+      // );
+      let z = 0;
+      itemBody[i].sizePrice.forEach(async (element) => {
+        if (
+          itemData.variance.filter(
+            (data) => data.varianceNameOnItem.varianceName == element.size,
+          ).length == 0
+        ) {
+          console.log('if new vairance NOT exists create new variance');
+          // if new vairance NOT exists create new variance
+          await client.items.update({
+            where: {
+              itemName: itemBody[i].item,
+            },
+            include: {
+              variance: {
+                include: {
+                  varianceNameOnItem: {
+                    include: {
+                      websites: true,
+                    },
+                  },
+                },
+              },
+            },
+            data: {
+              variance: {
+                create: {
+                  varianceNameOnItem: {
+                    connectOrCreate: {
+                      where: {
+                        varianceName: element.size,
+                      },
+                      create: {
+                        varianceName: element.size,
+                        websites: {
+                          create: {
+                            price: element.sizePrice,
+                            websites: {
+                              connectOrCreate: {
+                                where: { url: itemBody[i].url },
+                                create: {
+                                  url: itemBody[i].url,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        } else {
+          // else new variance exists add new price of variance
+          await client.items.update({
+            where: {
+              itemName: itemBody[i].item,
+            },
+            include: {
+              variance: {
+                include: {
+                  varianceNameOnItem: {
+                    include: {
+                      websites: true,
+                    },
+                  },
+                },
+              },
+            },
+            data: {
+              variance: {
+                update: {
+                  where: {
+                    itemId_itemVarianceIdOnItem: {
+                      itemId: 5,
+                      itemVarianceIdOnItem: 7,
+                    },
+                  },
+                  data: {
+                    varianceNameOnItem: {
+                      connect: {
+                        varianceName: element.size,
+                      },
+                      update: {
+                        websites: {
+                          create: [
+                            {
+                              price: element.sizePrice,
+                              websites: {
+                                connectOrCreate: {
+                                  where: {
+                                    url: itemBody[i].url,
+                                  },
+                                  create: {
+                                    url: itemBody[i].url,
+                                  },
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                },
+                // create: {
+                //   varianceNameOnItem: {
+                //     connect: {
+                //       // where: {
+                //       varianceName: element.size,
+                //       // },
+                //     },
+                //     create: {
+                //       varianceName: element.size,
+                //       websites: {
+                //         create: [
+                //           {
+                //             price: element.sizePrice,
+                //             websites: {
+                //               connectOrCreate: {
+                //                 where: {
+                //                   url: itemBody[i].url,
+                //                 },
+                //                 create: {
+                //                   url: itemBody[i].url,
+                //                 },
+                //               },
+                //             },
+                //           },
+                //         ],
+                //       },
+                //     },
+                //   },
+                // },
+                // update: {
+                //   where: {
+                //     itemId_itemVarianceIdOnItem: {
+                //       itemId: 5,
+                //       itemVarianceIdOnItem: 6,
+                //     },
+                //   },
+                //   data: {
+                //     varianceNameOnItem: {
+                //       connectOrCreate: {
+                //         where: {
+                //           varianceName: element.size,
+                //         },
+                //         create: {
+                //           varianceName: element.size,
+                //           websites: {
+                //             create: [
+                //               {
+                //                 price: element.sizePrice,
+                //                 websites: {
+                //                   connect: {
+                //                     url: itemBody[i].url,
+                //                   },
+                //                 },
+                //               },
+                //             ],
+                //           },
+                //         },
+                //       },
+                //     },
+                //   },
+                // },
+              },
+            },
+            // },
+          });
+        }
+        z++;
+        console.log('finish one loop', z);
+      });
     }
   }
   // await client.items.findMany().then((data) => console.log(data));

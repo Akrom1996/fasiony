@@ -34,15 +34,17 @@ model Prices {
   websiteId Int?
   website   Websites? @relation(fields: [websiteId], references: [id])
 }
-model VarianceOnItem {
-  id             Int          @default(autoincrement())
-  variance           Items        @relation(fields: [itemId], references: [id])
-  itemId         Int // relation scalar field (used in the `@relation` attribute above)
-  varianceName   ItemVariance @relation(fields: [itemVarianceId], references: [id])
-  itemVarianceId Int // relation scalar field (used in the `@relation` attribute above)
 
-  @@id([itemId, itemVarianceId])
+model VarianceOnItem {
+  id                   Int          @default(autoincrement())
+  items                Items        @relation(fields: [itemId], references: [id])
+  itemId               Int // relation scalar field (used in the `@relation` attribute above)
+  varianceNameOnItem   ItemVariance @relation(fields: [itemVarianceIdOnItem], references: [id])
+  itemVarianceIdOnItem Int // relation scalar field (used in the `@relation` attribute above)
+
+  @@id([itemId, itemVarianceIdOnItem])
 }
+
 model ItemVariance {
   id           Int                      @id @default(autoincrement())
   varianceName String                   @unique
@@ -70,5 +72,3 @@ model ItemVarianceOnWebsites {
 
   @@id([websitesId, itemVarianceId, dateTime])
 }
-
-
