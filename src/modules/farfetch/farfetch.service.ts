@@ -208,7 +208,7 @@ export class FarfetchService {
       }
     });
   }
-  @Cron('10 * * * * *')
+  // @Cron('10 * * * * *')
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls

@@ -26,10 +26,45 @@ export const storeItemInfoInDB = async (
       },
     });
     itemBody[i].sizePrice.forEach(async (element) => {
+      const currentVariance = await client.itemVariance.findUnique({
+        where: {
+          varianceName: element.size,
+        },
+      });
       variance.push({
         varianceNameOnItem: {
+          // connectOrCreate: {
+
           create: {
-            varianceName: element.size,
+            varianceName: currentVariance
+              ? {
+                  connect: {
+                    varianceName: element.size,
+                  },
+                }
+              : {
+                  create: {
+                    varianceName: element.size,
+                    websites: {
+                      create: [
+                        {
+                          price: element.sizePrice,
+                          websites: {
+                            connectOrCreate: {
+                              where: {
+                                url: itemBody[i].url,
+                              },
+                              create: {
+                                url: itemBody[i].url,
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+
             websites: {
               create: [
                 {
@@ -49,6 +84,7 @@ export const storeItemInfoInDB = async (
             },
           },
         },
+        // },
       });
     }); // creating variance with url n:m connection
     if (itemBody[i].sizePrice.length == 0) {
@@ -116,10 +152,6 @@ export const storeItemInfoInDB = async (
           },
         });
       }
-      // itemData.variance.forEach((element) =>
-      //   console.log(element.varianceNameOnItem.varianceName),
-      // );
-      let z = 0;
       itemBody[i].sizePrice.forEach(async (element) => {
         if (
           itemData.variance.filter(
@@ -195,8 +227,24 @@ export const storeItemInfoInDB = async (
                 update: {
                   where: {
                     itemId_itemVarianceIdOnItem: {
-                      itemId: 5,
-                      itemVarianceIdOnItem: 7,
+                      itemId: (
+                        await client.items.findUnique({
+                          where: { itemName: itemBody[i].item },
+                          select: {
+                            id: true,
+                          },
+                        })
+                      ).id,
+                      itemVarianceIdOnItem: (
+                        await client.itemVariance.findUnique({
+                          where: {
+                            varianceName: element.size,
+                          },
+                          select: {
+                            id: true,
+                          },
+                        })
+                      ).id,
                     },
                   },
                   data: {
@@ -226,74 +274,11 @@ export const storeItemInfoInDB = async (
                     },
                   },
                 },
-                // create: {
-                //   varianceNameOnItem: {
-                //     connect: {
-                //       // where: {
-                //       varianceName: element.size,
-                //       // },
-                //     },
-                //     create: {
-                //       varianceName: element.size,
-                //       websites: {
-                //         create: [
-                //           {
-                //             price: element.sizePrice,
-                //             websites: {
-                //               connectOrCreate: {
-                //                 where: {
-                //                   url: itemBody[i].url,
-                //                 },
-                //                 create: {
-                //                   url: itemBody[i].url,
-                //                 },
-                //               },
-                //             },
-                //           },
-                //         ],
-                //       },
-                //     },
-                //   },
-                // },
-                // update: {
-                //   where: {
-                //     itemId_itemVarianceIdOnItem: {
-                //       itemId: 5,
-                //       itemVarianceIdOnItem: 6,
-                //     },
-                //   },
-                //   data: {
-                //     varianceNameOnItem: {
-                //       connectOrCreate: {
-                //         where: {
-                //           varianceName: element.size,
-                //         },
-                //         create: {
-                //           varianceName: element.size,
-                //           websites: {
-                //             create: [
-                //               {
-                //                 price: element.sizePrice,
-                //                 websites: {
-                //                   connect: {
-                //                     url: itemBody[i].url,
-                //                   },
-                //                 },
-                //               },
-                //             ],
-                //           },
-                //         },
-                //       },
-                //     },
-                //   },
-                // },
               },
             },
             // },
           });
         }
-        z++;
-        console.log('finish one loop', z);
       });
     }
   }
