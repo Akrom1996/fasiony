@@ -170,7 +170,7 @@ export class ModesService {
   }
 
   async getItemDataByUrl(url: string) {
-    this.log.log(`Starting farfetch with ${url}`);
+    this.log.log(`Starting modes with ${url}`);
     const browser = await puppeteer.launch({
       executablePath: isDocker()
         ? '/usr/bin/chromium-browser'
@@ -188,16 +188,18 @@ export class ModesService {
       Promise.reject(err),
     );
     await browser.close();
+    await storeItemInfoInDB([data], this.client);
     return data;
   }
-
+  @Cron('40 * * * * *')
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls
       .findMany()
       .catch((err) => Promise.reject(err));
-    const modesUrls = urls.filter((url) => url.url.indexOf('www.modes.com'));
-    this.log.log(`Number of items to crawl ${modesUrls.length}`);
+    const modesUrls = urls.filter(
+      (url) => url.url.indexOf('www.modes.com') !== -1,
+    );
     if (!modesUrls.length) {
       return 'No modesUrls saved in DB';
     }

@@ -67,8 +67,7 @@ export class FarfetchService {
       Promise.reject(err),
     );
     await browser.close();
-    // const result = await storeItemInfoInDB([data], this.client);
-    // console.log(result);
+    await storeItemInfoInDB([data], this.client);
     return data;
   }
   async startItemCrawlingFarfetch(page, url: string): Promise<any> {
@@ -208,16 +207,15 @@ export class FarfetchService {
       }
     });
   }
-  // @Cron('10 * * * * *')
+  @Cron('10 * * * * *')
   async getItemsDataFromDB(): Promise<any> {
     const results = [];
     const urls = await this.client.websiteUrls
       .findMany()
       .catch((err) => Promise.reject(err));
-    const farfetchUrls = urls.filter((url) =>
-      url.url.indexOf('www.farfetch.com'),
+    const farfetchUrls = urls.filter(
+      (url) => url.url.indexOf('www.farfetch.com') !== -1,
     );
-    this.log.log(`Number of items to crawl ${farfetchUrls.length}`);
     if (!farfetchUrls.length) {
       return 'No farfetchUrls saved in DB';
     }

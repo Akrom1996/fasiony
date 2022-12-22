@@ -28,32 +28,32 @@ export const storeItemInfoInDB = async (
     itemBody[i].sizePrice.forEach(async (element) => {
       variance.push({
         varianceNameOnItem: {
-          connectOrCreate: {
-            where: {
-              varianceName: element.size,
-            },
-            create: {
-              varianceName: element.size,
-              websites: {
-                create: [
-                  {
-                    price: element.sizePrice,
-                    websites: {
-                      connectOrCreate: {
-                        where: {
-                          url: itemBody[i].url,
-                        },
-                        create: {
-                          url: itemBody[i].url,
-                        },
+          // connectOrCreate: {
+          //   where: {
+          //     varianceName: element.size,
+          //   },
+          create: {
+            varianceName: element.size + ':' + itemBody[i].item.trim(),
+            websites: {
+              create: [
+                {
+                  price: element.sizePrice,
+                  websites: {
+                    connectOrCreate: {
+                      where: {
+                        url: itemBody[i].url,
+                      },
+                      create: {
+                        url: itemBody[i].url,
                       },
                     },
                   },
-                ],
-              },
+                },
+              ],
             },
           },
         },
+        // },
       });
     }); // creating variance with url n:m connection
     if (itemBody[i].sizePrice.length == 0) {
@@ -61,7 +61,6 @@ export const storeItemInfoInDB = async (
     }
     if (!itemData) {
       console.log('item does not exist');
-      console.log(JSON.stringify(variance));
       const data = {
         itemName: itemBody[i].item,
         brandName: itemBody[i].brand,
@@ -89,37 +88,7 @@ export const storeItemInfoInDB = async (
         };
       else
         data['variance'] = {
-          create: [
-            {
-              varianceNameOnItem: {
-                connectOrCreate: {
-                  where: {
-                    varianceName: itemBody[i].sizePrice[0].size,
-                  },
-                  create: {
-                    varianceName: itemBody[i].sizePrice[0].size,
-                    websites: {
-                      create: [
-                        {
-                          price: itemBody[i].sizePrice[0].sizePrice,
-                          websites: {
-                            connectOrCreate: {
-                              where: {
-                                url: itemBody[i].url,
-                              },
-                              create: {
-                                url: itemBody[i].url,
-                              },
-                            },
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
-            },
-          ],
+          create: variance,
         };
       await client.items.create({
         data: data,
@@ -154,7 +123,9 @@ export const storeItemInfoInDB = async (
       itemBody[i].sizePrice.forEach(async (element) => {
         if (
           itemData.variance.filter(
-            (data) => data.varianceNameOnItem.varianceName == element.size,
+            (data) =>
+              data.varianceNameOnItem.varianceName ==
+              element.size + ':' + itemBody[i].item.trim(),
           ).length == 0
         ) {
           console.log('if new vairance NOT exists create new variance');
@@ -180,10 +151,12 @@ export const storeItemInfoInDB = async (
                   varianceNameOnItem: {
                     connectOrCreate: {
                       where: {
-                        varianceName: element.size,
+                        varianceName:
+                          element.size + ':' + itemBody[i].item.trim(),
                       },
                       create: {
-                        varianceName: element.size,
+                        varianceName:
+                          element.size + ':' + itemBody[i].item.trim(),
                         websites: {
                           create: {
                             price: element.sizePrice,
@@ -237,7 +210,8 @@ export const storeItemInfoInDB = async (
                       itemVarianceIdOnItem: (
                         await client.itemVariance.findUnique({
                           where: {
-                            varianceName: element.size,
+                            varianceName:
+                              element.size + ':' + itemBody[i].item.trim(),
                           },
                           select: {
                             id: true,
@@ -249,7 +223,8 @@ export const storeItemInfoInDB = async (
                   data: {
                     varianceNameOnItem: {
                       connect: {
-                        varianceName: element.size,
+                        varianceName:
+                          element.size + ':' + itemBody[i].item.trim(),
                       },
                       update: {
                         websites: {
