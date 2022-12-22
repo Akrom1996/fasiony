@@ -26,65 +26,34 @@ export const storeItemInfoInDB = async (
       },
     });
     itemBody[i].sizePrice.forEach(async (element) => {
-      const currentVariance = await client.itemVariance.findUnique({
-        where: {
-          varianceName: element.size,
-        },
-      });
       variance.push({
         varianceNameOnItem: {
-          // connectOrCreate: {
-
-          create: {
-            varianceName: currentVariance
-              ? {
-                  connect: {
-                    varianceName: element.size,
-                  },
-                }
-              : {
-                  create: {
-                    varianceName: element.size,
+          connectOrCreate: {
+            where: {
+              varianceName: element.size,
+            },
+            create: {
+              varianceName: element.size,
+              websites: {
+                create: [
+                  {
+                    price: element.sizePrice,
                     websites: {
-                      create: [
-                        {
-                          price: element.sizePrice,
-                          websites: {
-                            connectOrCreate: {
-                              where: {
-                                url: itemBody[i].url,
-                              },
-                              create: {
-                                url: itemBody[i].url,
-                              },
-                            },
-                          },
+                      connectOrCreate: {
+                        where: {
+                          url: itemBody[i].url,
                         },
-                      ],
-                    },
-                  },
-                },
-
-            websites: {
-              create: [
-                {
-                  price: element.sizePrice,
-                  websites: {
-                    connectOrCreate: {
-                      where: {
-                        url: itemBody[i].url,
-                      },
-                      create: {
-                        url: itemBody[i].url,
+                        create: {
+                          url: itemBody[i].url,
+                        },
                       },
                     },
                   },
-                },
-              ],
+                ],
+              },
             },
           },
         },
-        // },
       });
     }); // creating variance with url n:m connection
     if (itemBody[i].sizePrice.length == 0) {
@@ -120,7 +89,37 @@ export const storeItemInfoInDB = async (
         };
       else
         data['variance'] = {
-          create: variance,
+          create: [
+            {
+              varianceNameOnItem: {
+                connectOrCreate: {
+                  where: {
+                    varianceName: itemBody[i].sizePrice[0].size,
+                  },
+                  create: {
+                    varianceName: itemBody[i].sizePrice[0].size,
+                    websites: {
+                      create: [
+                        {
+                          price: itemBody[i].sizePrice[0].sizePrice,
+                          websites: {
+                            connectOrCreate: {
+                              where: {
+                                url: itemBody[i].url,
+                              },
+                              create: {
+                                url: itemBody[i].url,
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ],
         };
       await client.items.create({
         data: data,

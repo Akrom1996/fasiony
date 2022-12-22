@@ -67,8 +67,8 @@ export class FarfetchService {
       Promise.reject(err),
     );
     await browser.close();
-    const result = await storeItemInfoInDB([data], this.client);
-    console.log(result);
+    // const result = await storeItemInfoInDB([data], this.client);
+    // console.log(result);
     return data;
   }
   async startItemCrawlingFarfetch(page, url: string): Promise<any> {
