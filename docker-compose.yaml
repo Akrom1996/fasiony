@@ -1,17 +1,14 @@
 version: "3.9"
 services:
-  # fasiony:
-  #   build: ./
-  #   container_name: fasiony-service
-  #   # network_mode: bridge
-  #   ports: 
-  #     - "5001:3002"
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     customnetwork:
-  #       ipv4_address: 172.20.0.4
+  fasiony:
+    build: ./
+    container_name: fasiony-service
+    # network_mode: bridge
+    ports: 
+      - "5001:3002"
+    restart: unless-stopped
+    depends_on:
+      - db
   
   db:
     image: postgres
@@ -30,9 +27,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    # networks:
-    #   customnetwork:
-    #     ipv4_address: 172.17.0.3
   pg-admin:
     image: dpage/pgadmin4:latest
     container_name: admin-pg

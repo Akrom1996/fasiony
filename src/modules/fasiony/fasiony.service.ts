@@ -16,15 +16,7 @@ export class FasionyService {
       include: {
         variance: {
           include: {
-            varianceNameOnItem: {
-              include: {
-                websites: {
-                  include: {
-                    websites: true,
-                  },
-                },
-              },
-            },
+            websites: true,
           },
         },
         prices: {

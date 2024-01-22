@@ -15,14 +15,15 @@ model WebsiteUrls {
 }
 
 model Items {
-  id         Int              @id @default(autoincrement())
-  itemName   String           @unique
-  brandName  String
-  details    String?
-  imageUrl   String?
-  highlights String[]
-  variance   VarianceOnItem[]
-  prices     Prices[]
+  id           Int                      @id @default(autoincrement())
+  itemName     String                   @unique
+  brandName    String
+  details      String?
+  imageUrl     String?
+  highlights   String[]
+  variance     ItemVariance[]//VarianceOnItem[]
+  prices       Prices[]
+  // itemVariance ItemVarianceOnWebsites[]
 }
 
 model Prices {
@@ -35,15 +36,15 @@ model Prices {
   website   Websites? @relation(fields: [websiteId], references: [id])
 }
 
-model VarianceOnItem {
-  id                   Int          @default(autoincrement())
-  items                Items        @relation(fields: [itemId], references: [id])
-  itemId               Int // relation scalar field (used in the `@relation` attribute above)
-  varianceNameOnItem   ItemVariance @relation(fields: [itemVarianceIdOnItem], references: [id])
-  itemVarianceIdOnItem Int // relation scalar field (used in the `@relation` attribute above)
+// model VarianceOnItem {
+//   id                   Int          @default(autoincrement())
+//   items                Items        @relation(fields: [itemId], references: [id])
+//   itemId               Int // relation scalar field (used in the `@relation` attribute above)
+//   varianceNameOnItem   ItemVariance @relation(fields: [itemVarianceIdOnItem], references: [id])
+//   itemVarianceIdOnItem Int // relation scalar field (used in the `@relation` attribute above)
 
-  @@id([itemId, itemVarianceIdOnItem])
-}
+//   @@id([itemId, itemVarianceIdOnItem])
+// }
 
 model ItemVariance {
   id           Int                      @id @default(autoincrement())
@@ -51,7 +52,7 @@ model ItemVariance {
   // itemsId      Int
   // item         Items                    @relation(fields: [itemsId], references: [id])
   websites     ItemVarianceOnWebsites[]
-  item         VarianceOnItem[]
+  item         Items[] //VarianceOnItem[]
 }
 
 model Websites {
@@ -67,6 +68,8 @@ model ItemVarianceOnWebsites {
   websitesId     Int // relation scalar field (used in the `@relation` attribute above)
   itemVariance   ItemVariance @relation(fields: [itemVarianceId], references: [id])
   itemVarianceId Int // relation scalar field (used in the `@relation` attribute above)
+  // itemId         Int?         @unique
+  // item           Items?       @relation(fields: [itemId], references: [id])
   price          String
   dateTime       DateTime     @default(now())
 
